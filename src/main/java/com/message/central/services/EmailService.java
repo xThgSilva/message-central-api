@@ -22,7 +22,7 @@ public class EmailService {
 		
 		message.setFrom(from);
 		message.setTo(user.getEmail());
-		message.setSubject("Welcome to Notification Central");
+		message.setSubject("Welcome to Message Central");
 		message.setText(
 				"Hello " + user.getName() + ",\n\n" +
 	            "Your account has been successfully created!\n\n" +
