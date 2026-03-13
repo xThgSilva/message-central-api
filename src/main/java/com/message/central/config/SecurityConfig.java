@@ -28,7 +28,7 @@ public class SecurityConfig {
 		return http.csrf(csrf -> csrf.disable()).cors(cors -> {
 		}).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(
-						auth -> auth.requestMatchers("/user/login", "/user/register", "/chat/**").permitAll().anyRequest().authenticated())
+						auth -> auth.requestMatchers("/user/login", "/user/register","/user/find/**", "/chat/**").permitAll().anyRequest().authenticated())
 				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
 	}
 }

@@ -6,7 +6,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.message.central.entities.User;
 import com.message.central.exceptions.EmailAlreadyExistsException;
 import com.message.central.exceptions.InsufficienteCharactersException;
@@ -17,7 +16,7 @@ import com.message.central.requests.LoginRequest;
 import com.message.central.requests.UserRequest;
 import com.message.central.responses.LoginResponse;
 import com.message.central.responses.UserResponse;
-
+import org.springframework.data.domain.Pageable;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Service
@@ -55,12 +54,19 @@ public class UserService {
 		return new UserResponse(user);
 	}
 
-	public Page<UserResponse> listAllUsers(int page, int size) {
-		PageRequest pageable = PageRequest.of(page, size);
+	public Page<UserResponse> findUsers(String name, int page, int size) {
 
-		Page<User> users = userRepository.findAll(pageable);
+	    PageRequest pageable = PageRequest.of(page, size);
 
-		return users.map(UserResponse::new);
+	    Page<User> users;
+
+	    if (name == null || name.isBlank()) {
+	        users = userRepository.findAll(pageable);
+	    } else {
+	        users = userRepository.findByNameContainingIgnoreCase(name, pageable);
+	    }
+
+	    return users.map(UserResponse::new);
 	}
 
 	public UserResponse findUserById(Long id) {
@@ -69,7 +75,7 @@ public class UserService {
 
 		return new UserResponse(user);
 	}
-
+	
 	public void deleteUserById(Long id) {
 		User user = userRepository.findById(id)
 				.orElseThrow(() -> new NotFoundException("User with Id " + id + " not found to delete."));

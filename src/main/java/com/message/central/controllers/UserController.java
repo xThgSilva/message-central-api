@@ -1,5 +1,6 @@
 package com.message.central.controllers;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.message.central.entities.User;
 import com.message.central.requests.LoginRequest;
 import com.message.central.requests.UserRequest;
@@ -38,9 +41,10 @@ public class UserController {
 		return ResponseEntity.ok(userService.createAccount(request));
 	}
 	
-	@GetMapping(value = "/all")
-	public ResponseEntity<Page<UserResponse>> listAllUsers(int page, int size) {
-		return ResponseEntity.ok(userService.listAllUsers(page, size));
+	@GetMapping
+	public ResponseEntity<Page<UserResponse>> findUsers(@RequestParam(required = false) String name, @RequestParam int page, 
+			@RequestParam int size) {
+	    return ResponseEntity.ok(userService.findUsers(name, page, size));
 	}
 	
 	@GetMapping(value = "/{id}")
