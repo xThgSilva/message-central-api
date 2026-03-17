@@ -44,14 +44,6 @@ public class GlobalHanderException {
 		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
 	}
 	
-	@ExceptionHandler(SameSenderRecipientIdException.class)
-	public ResponseEntity<ExceptionResponse> invalidPermissionType(SameSenderRecipientIdException ex,
-			HttpServletRequest request) {
-		ExceptionResponse error = new ExceptionResponse(HttpStatus.BAD_REQUEST.value(), "Bad Request.", ex.getMessage());
-		
-		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-	}
-	
 	@ExceptionHandler(InvalidCredentials.class)
 	public ResponseEntity<ExceptionResponse> invalidCredenitials(InvalidCredentials ex,
 			HttpServletRequest request) {
