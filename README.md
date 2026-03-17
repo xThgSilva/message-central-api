@@ -6,8 +6,9 @@ This API is designed to be consumed by a React frontend application.
 <div align="center">
 
 ![MySQL](https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)
-![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
+![Maven](https://img.shields.io/badge/apachemaven-C71A36.svg?style=for-the-badge&logo=apachemaven&logoColor=white)
 ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 ![Eclipse](https://img.shields.io/badge/Eclipse-black.svg?style=for-the-badge&logo=Eclipse&logoColor=orange)
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
 </div>
@@ -140,10 +141,9 @@ Authenticates and return a JWT token
 **Response**
 
 * **Status Code:** 200 OK
-* **Cookie:** `jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` (HttpOnly, valid for 1 hour)
 * **Body:**
 
-```
+```json
 {
     "message": "Login Succesully",
     "token": "your_jwt_token_here"
