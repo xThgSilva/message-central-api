@@ -544,6 +544,7 @@ For production environments, recommended best practices include:
 
 # Front-end
 See also the project's front-end
-[![Access API](https://img.shields.io/badge/Access_API-Front_End-black?style=for-the-badge&logo=springboot)](https://github.com/xThgSilva/message-central-web)
+
+[![Access API](https://img.shields.io/badge/Access_Front_End-Front_End-black?style=for-the-badge&logo=react)](https://github.com/xThgSilva/message-central-web)
 
 > If you have any questions or suggestions, feel free to open an issue.
