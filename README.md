@@ -31,32 +31,10 @@ This API is designed to be consumed by a React frontend application.
 - JJWT: Java library for generating and validating tokens
 
 ## How to send your token 
-After logging in, your JWT token will be stored in your browser's `sessionStorage` and automatically sent in the request headers in website (see considerations below). For requests via Postman and Insomnia, you can send your token as follows.
+After logging in, your JWT token will be stored in your browser's `sessionStorage` and automatically sent in the request headers in website (see the considerations at the end.). For requests via Postman and Insomnia, you can send your token as follows.
 ````
 Authorization: Bearer your_token_here
 ````
-### Considerations regarding token security
-This API uses JWT (JSON Web Token) for authentication and authorization. When a user successfully logs in, the API generates a signed JWT containing
-the user's identity. This token must be sent in subsequent requests using the `Authorization` header with the Bearer scheme: <br />
-Authorization: Bearer your_token_here
-
-The backend validates the token on each request, ensuring that only authenticated
-users can access protected endpoints.
-
-### Security Considerations
-In the current architecture, the JWT is stored on the client side (frontend),
-which is responsible for sending it in each request.
-
-The API is stateless, meaning it does not store session data. All authentication
-information is contained within the token itself.
-
-For production environments, recommended best practices include:
-
-- Using short-lived access tokens
-- Implementing refresh tokens for session renewal
-- Storing tokens in `HttpOnly` and `Secure` cookies instead of client-side storage
-- Applying proper validation and expiration handling
-
 # Endpoints
 **Public routes**, dont'n require authentication
 
@@ -91,7 +69,6 @@ Register a new user in the system and send a welcome email (if email exists)
     "name": "John"
 }
 ```
-
 ### Possible errors
 **Error - Email Already Registered**
 
@@ -178,7 +155,6 @@ Authenticates and return a JWT token
     "timestamp": "2026-03-17T15:07:15.7164522"
 }
 ```
---- 
 
 ## User Endpoints
 ### **All router below require authentication**
@@ -190,7 +166,8 @@ List all users
 
 * **URL:** `/user?page={pageNumber}&size={quantityUsersToReturn}`
 * **Method:** GET
-* **Authentication:** JWT token
+* **Headers:**
+    * Authorization: User JWT token
 
 **Response**
 
@@ -249,9 +226,10 @@ Find user by Id
 
 **Request**
 
-* **URL:** `/user{id}}`
+* **URL:** `/user{id}`
 * **Method:** GET
-* **Authentication:** JWT token
+* **Headers:**
+    * Authorization: User JWT token
 
 **Response**
 
@@ -341,3 +319,231 @@ Update the user's account details using their own token.
     "timestamp": "2026-03-17T15:07:15.7164522"
 }
 ```
+# Message Endpoints
+## 1. POST `/message/send`
+Send a messsage to user
+
+**Request**
+
+* **URL:** `/message/send`
+* **Method:** POST
+* **Header:**
+  * Content-Type: application/json
+  * Authorization: User JWT token
+* **Body:**
+
+```json
+{
+    "senderUserId": 1,  // Who send
+    "recipientUserId": 2,   // Who receive
+    "content": "Your message"
+}
+```
+**Response**
+
+* **Status Code:** 200 OK
+* **Body:**
+
+```json
+{
+    "content": "Your message here",
+    "id": 3,
+    "recipientUserId": 2,
+    "sendAt": "2026-03-18T12:35:43.2495222",
+    "senderUserId": 1
+}
+```
+### Possible errors
+**Error - Sender Not Found**
+
+* **Status Code:** 404 Not Found
+* **Body:**
+
+```json
+{
+    "status": 404,
+    "error": "Not Found.",
+    "message": "Sender not found",
+    "timestamp": "2026-03-18T12:38:09.7697814"
+}
+```
+**Error - Recipient Not Found**
+
+* **Status Code:** 404 Not Found
+* **Body:**
+
+```json
+{
+    "status": 404,
+    "error": "Not Found.",
+    "message": "Recipient not found",
+    "timestamp": "2026-03-18T12:38:09.7697814"
+}
+```
+## 2. GET `message/conversation/{senderId}/{recipientId}`
+Returns a conversation between 2 users
+
+**Request**
+
+* **URL:** `message/conversation/{senderId}/{recipientId}`
+* **Method:** GET
+* **Header:**
+  * Authorization: User JWT token
+
+**Response**
+
+* **Status Code:** 200 OK
+* **Body: (Using senderId = 1 and recipientId = 2)**
+
+```json
+[
+    {
+        "content": "Hello",
+        "id": 1,
+        "recipientUserId": 2,
+        "sendAt": "2026-03-16T15:27:00.790076",
+        "senderUserId": 1
+    },
+    {
+        "content": "Hello, how are you?",
+        "id": 2,
+        "recipientUserId": 1,
+        "sendAt": "2026-03-16T15:27:26.03531",
+        "senderUserId": 2
+    },
+    {
+        "content": "Your message here",
+        "id": 3,
+        "recipientUserId": 1,
+        "sendAt": "2026-03-18T12:35:43.249522",
+        "senderUserId": 2
+    }
+]
+```
+# Dependencies
+Dependencies used in the project
+```xml
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+        
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		
+        <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+        <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+        <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+      		<groupId>org.springframework.boot</groupId>
+      		<artifactId>spring-boot-starter-security</artifactId>
+    	</dependency>
+
+   		<dependency>
+      		<groupId>org.springframework.boot</groupId>
+      		<artifactId>spring-boot-starter-security-test</artifactId>
+      		<scope>test</scope>
+    	</dependency>
+
+    	<dependency>
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
+		<dependency>
+    		<groupId>io.jsonwebtoken</groupId>
+    		<artifactId>jjwt-api</artifactId>
+    		<version>0.11.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+    		<artifactId>jjwt-impl</artifactId>
+    		<version>0.11.5</version>
+    		<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.11.5</version>
+    		<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
+```
+# Error Response
+Error response structure
+```json
+{
+    "status": "Error Code (400, 404, 409...)",
+    "error": "Message (Bad Request, Not Found)",
+    "message": "Explain the reason for the error.",
+    "timestamp": "2026-03-18T12:38:09.7697814 (Error moment)"
+}
+```
+### Considerations regarding token security
+This API uses JWT (JSON Web Token) for authentication and authorization. When a user successfully logs in, the API generates a signed JWT containing
+the user's identity. This token must be sent in subsequent requests using the `Authorization` header with the Bearer scheme: <br />
+Authorization: Bearer your_token_here
+
+The backend validates the token on each request, ensuring that only authenticated
+users can access protected endpoints.
+
+### Security Considerations
+In the current architecture, the JWT is stored on the client side (frontend),
+which is responsible for sending it in each request.
+
+The API is stateless, meaning it does not store session data. All authentication
+information is contained within the token itself.
+
+For production environments, recommended best practices include:
+
+- Using short-lived access tokens
+- Implementing refresh tokens for session renewal
+- Storing tokens in `HttpOnly` and `Secure` cookies instead of client-side storage
+- Applying proper validation and expiration handling
+
+# Front-end
+See also the project's front-end
+[![Access API](https://img.shields.io/badge/Access_API-Front_End-black?style=for-the-badge&logo=springboot)](https://github.com/xThgSilva/message-central-web)
+
+> If you have any questions or suggestions, feel free to open an issue.
